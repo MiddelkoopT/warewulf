@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Add `--command` option to `wwctl overlay edit` to set editor command.
+### Changed
+
+- Update GitHub actions to build aarch64 artifacts.
 
 ## v4.6.0, 2025-03-02
 
