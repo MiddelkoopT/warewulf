@@ -39,15 +39,9 @@ jobs:
           fail-fast: false
           matrix:
             include:
-              - target: rocky+epel-8-x86_64
-                arch: x86_64
-                dist: el8
               - target: rocky+epel-9-x86_64
-                arch: x86_64
+                arch: arm64 
                 dist: el9
-              - target: opensuse-leap-15.5-x86_64
-                arch: x86_64
-                dist: suse.lp155
         permissions: write-all
 
         steps:
