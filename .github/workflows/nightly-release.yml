@@ -9,7 +9,7 @@ on:
 jobs:
     generate:
         name: Generate spec, dist and collect commits info
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04-arm
         outputs:
           should-continue: ${{ steps.generate.outputs.should-continue }}
           version: ${{ steps.generate.outputs.version }}
