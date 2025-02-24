@@ -39,7 +39,7 @@ jobs:
           fail-fast: false
           matrix:
             include:
-              - target: rocky+epel-9-x86_64
+              - target: rocky+epel-9-arm64
                 arch: arm64 
                 dist: el9
         permissions: write-all
