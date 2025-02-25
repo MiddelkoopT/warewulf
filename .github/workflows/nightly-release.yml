@@ -7,58 +7,55 @@ on:
     - cron:  '05 00 * * *'
 
 jobs:
-    generate:
-        name: Generate spec, dist and collect commits info
-        runs-on: ubuntu-24.04-arm
-        outputs:
-          should-continue: ${{ steps.generate.outputs.should-continue }}
-          version: ${{ steps.generate.outputs.version }}
-          release-id: ${{ steps.generate.outputs.release-id }}
-        permissions: write-all
-        steps:
-          - name: Checkout Code
-            uses: actions/checkout@v4
-            with:
-              fetch-depth: 0
-          - uses: ./.github/actions/generate
-            name: generate warewulf spec, dist and collect commits info
-            id: generate
-            with:
-              token: ${{ secrets.GITHUB_TOKEN }}
-              event-id: ${{ github.event.release.id }}
+  generate:
+    name: Generate spec, dist and collect commits info
+    runs-on: ubuntu-24.04-arm
+    outputs:
+      should-continue: ${{ steps.generate.outputs.should-continue }}
+      version: ${{ steps.generate.outputs.version }}
+      release-id: ${{ steps.generate.outputs.release-id }}
+    permissions: write-all
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: generate warewulf spec, dist and collect commits info
+        uses: ./.github/actions/generate
+        id: generate
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          event-id: ${{ github.event.release.id }}
 
-    publish:
-        name: Build and publish releases
-        runs-on: ubuntu-24.04-arm
-        needs: generate
-        if: needs.generate.outputs.should-continue == 'true'
-        container:
-          image: rockylinux/rockylinux:9
-          options: --privileged
-        strategy:
-          fail-fast: false
-          matrix:
-            include:
-              - target: rocky+epel-9-arm64
-                arch: arm64 
-                dist: el9
-        permissions: write-all
+  publish:
+    name: Build and publish releases
+    runs-on: ubuntu-24.04-arm
+    needs: generate
+    if: needs.generate.outputs.should-continue == 'true'
+    container:
+      image: rockylinux/rockylinux:9
+      options: --privileged
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: rocky+epel-9-arm64
+            arch: arm64 
+            dist: el9
+    permissions: write-all
 
-        steps:
-          - name: Install git
-            run: |
-              dnf install -y git
-          - name: Checkout Code
-            uses: actions/checkout@v4
-            with:
-              fetch-depth: 0
-          - uses: ./.github/actions/rpm
-            name: build rpms
-            id: rpm
-            with:
-              dist: ${{ matrix.dist }}
-              arch: ${{ matrix.arch }}
-              target: ${{ matrix.target }}
-              token: ${{ secrets.GITHUB_TOKEN }}
-              version: ${{ needs.generate.outputs.version }}
-              event-id: ${{ needs.generate.outputs.release-id }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: build rpms
+        uses: ./.github/actions/rpm
+        id: rpm
+        with:
+          dist: ${{ matrix.dist }}
+          arch: ${{ matrix.arch }}
+          target: ${{ matrix.target }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: ${{ needs.generate.outputs.version }}
+          event-id: ${{ needs.generate.outputs.release-id }}
