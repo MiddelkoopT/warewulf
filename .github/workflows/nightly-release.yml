@@ -19,6 +19,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
+          sparse-checkout: .github
           fetch-depth: 0
       - name: generate warewulf spec, dist and collect commits info
         uses: ./.github/actions/generate
