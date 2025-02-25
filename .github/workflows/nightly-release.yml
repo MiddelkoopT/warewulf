@@ -51,7 +51,8 @@ jobs:
           fetch-depth: 0
       - name: Debug
         run: |
-          find /home/runner/work/warewulf/warewulf/.github/
+          pwd
+          ls -la
       - name: build rpms
         uses: ./.github/actions/rpm
         id: rpm
