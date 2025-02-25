@@ -47,8 +47,7 @@ jobs:
     steps:
       - name: Update apt and install git
         run: |
-          apt-get update
-          apt-get install -y git
+          dnf install -y git
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
