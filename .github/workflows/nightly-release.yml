@@ -45,17 +45,13 @@ jobs:
     permissions: write-all
 
     steps:
-      - name: Update apt and install git
+      - name: Install git
         run: |
           dnf install -y git
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Debug
-        run: |
-          pwd
-          ls -la
       - name: build rpms
         uses: ./.github/actions/rpm
         id: rpm
