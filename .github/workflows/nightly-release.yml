@@ -45,10 +45,13 @@ jobs:
     permissions: write-all
 
     steps:
+      - name: Update apt and install git
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          sparse-checkout: .github
           fetch-depth: 0
       - name: Debug
         run: |
