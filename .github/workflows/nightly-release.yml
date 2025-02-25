@@ -49,6 +49,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Debug
+        run: |
+          find /home/runner/work/warewulf/warewulf/.github/
       - name: build rpms
         uses: ./.github/actions/rpm
         id: rpm
