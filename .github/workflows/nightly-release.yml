@@ -29,7 +29,7 @@ jobs:
 
   publish:
     name: Build and publish releases
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.runs-on }}
     needs: generate
     if: needs.generate.outputs.should-continue == 'true'
     container:
@@ -42,9 +42,11 @@ jobs:
           - target: rocky+epel-9-aarch64
             arch: aarch64
             dist: el9
+            runs-on: ubuntu-24.04-arm
           - target: rocky+epel-9-x86_64
             arch: x86_64
             dist: el9
+            runs-on: ubuntu-24.04
     permissions: write-all
 
     steps:
