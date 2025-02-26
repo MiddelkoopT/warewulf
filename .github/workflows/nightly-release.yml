@@ -9,7 +9,7 @@ on:
 jobs:
   generate:
     name: Generate spec, dist and collect commits info
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-24.04
     outputs:
       should-continue: ${{ steps.generate.outputs.should-continue }}
       version: ${{ steps.generate.outputs.version }}
@@ -29,7 +29,7 @@ jobs:
 
   publish:
     name: Build and publish releases
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-24.04
     needs: generate
     if: needs.generate.outputs.should-continue == 'true'
     container:
@@ -41,6 +41,9 @@ jobs:
         include:
           - target: rocky+epel-9-aarch64
             arch: aarch64
+            dist: el9
+          - target: rocky+epel-9-x86_64
+            arch: x86_64
             dist: el9
     permissions: write-all
 
