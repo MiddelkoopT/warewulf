@@ -49,6 +49,7 @@ jobs:
           #   target: opensuse-leap-15.5
           - arch: x86_64
             runs-on: ubuntu-24.04
+            upload-source: true
           - arch: aarch64
             runs-on: ubuntu-24.04-arm
 
@@ -75,3 +76,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: ${{ needs.generate.outputs.version }}
           event-id: ${{ needs.generate.outputs.release-id }}
+          upload-source: ${{ matrix.upload-source }}
