@@ -38,32 +38,40 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        arch: [x86_64, aarch64]
+        dist: [el8, el9,suse.lp155]
         include:
-          - target: rocky+epel-9-aarch64
-            arch: aarch64
-            dist: el9
-            runs-on: ubuntu-24.04-arm
-          - target: rocky+epel-9-x86_64
-            arch: x86_64
-            dist: el9
+          - dist: el8
+            target: rocky+epel-8 #-arch
+          - dist: el9
+            target: rocky+epel-9
+          - dist: suse.lp155
+            target: opensuse-leap-15.5
+          - arch: x86_64
             runs-on: ubuntu-24.04
+          - arch: aarm64
+            runs-on: ubuntu-24.04-arm
+
     permissions: write-all
 
     steps:
-      - name: Install git
+      - name: Debug
         run: |
-          dnf install -y git
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: build rpms
-        uses: ./.github/actions/rpm
-        id: rpm
-        with:
-          dist: ${{ matrix.dist }}
-          arch: ${{ matrix.arch }}
-          target: ${{ matrix.target }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          version: ${{ needs.generate.outputs.version }}
-          event-id: ${{ needs.generate.outputs.release-id }}
+          echo ${{ matrix.dist }} ${{ matrix.target }} ${{ matrix.arch }} ${{ matrix.runs-on}}
+      # - name: Install git
+      #   run: |
+      #     dnf install -y git
+      # - name: Checkout Code
+      #   uses: actions/checkout@v4
+      #   with:
+      #     fetch-depth: 0
+      # - name: build rpms
+      #   uses: ./.github/actions/rpm
+      #   id: rpm
+      #   with:
+      #     dist: ${{ matrix.dist }}
+      #     arch: ${{ matrix.arch }}
+      #     target: ${{ matrix.target }}-${{ matrix.arch }}
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     version: ${{ needs.generate.outputs.version }}
+      #     event-id: ${{ needs.generate.outputs.release-id }}
