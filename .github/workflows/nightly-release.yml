@@ -39,14 +39,14 @@ jobs:
       fail-fast: false
       matrix:
         arch: [x86_64, aarch64]
-        dist: [el8, el9,suse.lp155]
+        dist: [el9] #[el9, el8, suse.lp155]
         include:
-          - dist: el8
-            target: rocky+epel-8 #-arch
           - dist: el9
             target: rocky+epel-9
-          - dist: suse.lp155
-            target: opensuse-leap-15.5
+          # - dist: el8
+          #   target: rocky+epel-8 #-arch
+          # - dist: suse.lp155
+          #   target: opensuse-leap-15.5
           - arch: x86_64
             runs-on: ubuntu-24.04
           - arch: aarch64
@@ -57,21 +57,21 @@ jobs:
     steps:
       - name: Debug
         run: |
-          echo ${{ matrix.dist }} ${{ matrix.target }} ${{ matrix.arch }} ${{ matrix.runs-on}}
-      # - name: Install git
-      #   run: |
-      #     dnf install -y git
-      # - name: Checkout Code
-      #   uses: actions/checkout@v4
-      #   with:
-      #     fetch-depth: 0
-      # - name: build rpms
-      #   uses: ./.github/actions/rpm
-      #   id: rpm
-      #   with:
-      #     dist: ${{ matrix.dist }}
-      #     arch: ${{ matrix.arch }}
-      #     target: ${{ matrix.target }}-${{ matrix.arch }}
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     version: ${{ needs.generate.outputs.version }}
-      #     event-id: ${{ needs.generate.outputs.release-id }}
+          echo === ${{ matrix.dist }} ${{ matrix.target }} ${{ matrix.arch }} ${{ matrix.runs-on}}
+      - name: Install git
+        run: |
+          dnf install -y git
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: build rpms
+        uses: ./.github/actions/rpm
+        id: rpm
+        with:
+          dist: ${{ matrix.dist }}
+          arch: ${{ matrix.arch }}
+          target: ${{ matrix.target }}-${{ matrix.arch }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: ${{ needs.generate.outputs.version }}
+          event-id: ${{ needs.generate.outputs.release-id }}
