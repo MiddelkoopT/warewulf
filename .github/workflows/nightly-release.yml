@@ -29,7 +29,7 @@ jobs:
 
   publish:
     name: Build and publish releases
-    runs-on: ubuntu-24.04 # ${{ matrix.runs-on }}
+    runs-on: ${{ matrix.runs-on }}
     needs: generate
     if: needs.generate.outputs.should-continue == 'true'
     container:
@@ -49,7 +49,7 @@ jobs:
             target: opensuse-leap-15.5
           - arch: x86_64
             runs-on: ubuntu-24.04
-          - arch: aarm64
+          - arch: aarch64
             runs-on: ubuntu-24.04-arm
 
     permissions: write-all
