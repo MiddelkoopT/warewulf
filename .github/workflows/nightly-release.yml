@@ -29,7 +29,7 @@ jobs:
 
   publish:
     name: Build and publish releases
-    runs-on: ${{ matrix.runs-on }}
+    runs-on: ubuntu-24.04 # ${{ matrix.runs-on }}
     needs: generate
     if: needs.generate.outputs.should-continue == 'true'
     container:
