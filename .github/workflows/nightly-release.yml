@@ -41,10 +41,10 @@ jobs:
         arch: [x86_64, aarch64]
         dist: [el9, el8, suse.lp155]
         include:
-          - dist: el9
-            target: rocky+epel-9
           - dist: el8
             target: rocky+epel-8 #-arch
+          - dist: el9
+            target: rocky+epel-9
           - dist: suse.lp155
             target: opensuse-leap-15.5
           - arch: x86_64
