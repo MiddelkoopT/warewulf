@@ -180,6 +180,7 @@ getent group %{wwgroup} >/dev/null || groupadd -r %{wwgroup}
 %{_datadir}/warewulf/overlays/ignition/rootfs/*
 %{_datadir}/warewulf/overlays/issue/rootfs/*
 %{_datadir}/warewulf/overlays/netplan/rootfs/*
+%{_datadir}/warewulf/overlays/persistent/ignition.json.ww
 %{_datadir}/warewulf/overlays/resolv/rootfs/*
 %attr(700, -, -) %{_datadir}/warewulf/overlays/ssh.authorized_keys/rootfs/*
 %{_datadir}/warewulf/overlays/ssh.host_keys/rootfs/*
