@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added userdocs for `wwctl node import` from yaml/csv.
 - Added uid, gid, and permissions to OverlayFile in REST API. #1925
 - (preview) Support provisioning to local storage with `wwctl <node|partition> set --root=/path/to/disk`
-- (preview) Support disk provisioning during dracut boot stage with Ignition
+- (preview) Support disk provisioning during dracut boot stage with Ignition, sfdisk, mkfs, and mkswap
 - Support configuring Ignition with resources
 
 ### Fixed
