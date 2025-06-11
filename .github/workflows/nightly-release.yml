@@ -33,18 +33,20 @@ jobs:
     needs: generate
     if: needs.generate.outputs.should-continue == 'true'
     container:
-      image: rockylinux/rockylinux:9
+      image: library/almalinux:10
       options: --privileged
     strategy:
       fail-fast: false
       matrix:
         arch: [x86_64, aarch64]
-        dist: [el9, el8, suse.lp155]
+        dist: [el10, el9, el8, suse.lp155]
         include:
           - dist: el8
             target: rocky+epel-8 #-arch
           - dist: el9
             target: rocky+epel-9
+          - dist: el10
+            target: almalinux+epel-9
           - dist: suse.lp155
             target: opensuse-leap-15.5
           - arch: x86_64
