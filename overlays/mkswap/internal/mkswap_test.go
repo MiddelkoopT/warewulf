@@ -101,7 +101,7 @@ already_formatted() {
 if command -v mkswap >/dev/null; then :
     if false || ! already_formatted /dev/disk/by-partlabel/swap; then
         info "warewulf: mkswap: formatting /dev/disk/by-partlabel/swap"
-        mkswap  /dev/disk/by-partlabel/swap  || die "warewulf: mkswap: failed to format /dev/disk/by-partlabel/swap"
+        mkswap   /dev/disk/by-partlabel/swap  || die "warewulf: mkswap: failed to format /dev/disk/by-partlabel/swap"
     else
         info "warewulf: mkswap: skipping /dev/disk/by-partlabel/swap"
         continue
@@ -155,7 +155,7 @@ already_formatted() {
 if command -v mkswap >/dev/null; then :
     if true || ! already_formatted /dev/disk/by-partlabel/swap; then
         info "warewulf: mkswap: formatting /dev/disk/by-partlabel/swap"
-        mkswap  /dev/disk/by-partlabel/swap  || die "warewulf: mkswap: failed to format /dev/disk/by-partlabel/swap"
+        mkswap   /dev/disk/by-partlabel/swap  || die "warewulf: mkswap: failed to format /dev/disk/by-partlabel/swap"
     else
         info "warewulf: mkswap: skipping /dev/disk/by-partlabel/swap"
         continue
@@ -216,7 +216,7 @@ already_formatted() {
 if command -v mkswap >/dev/null; then :
     if false || ! already_formatted /dev/disk/by-partlabel/swap; then
         info "warewulf: mkswap: formatting /dev/disk/by-partlabel/swap"
-        mkswap  /dev/disk/by-partlabel/swap  || die "warewulf: mkswap: failed to format /dev/disk/by-partlabel/swap"
+        mkswap   /dev/disk/by-partlabel/swap  || die "warewulf: mkswap: failed to format /dev/disk/by-partlabel/swap"
     else
         info "warewulf: mkswap: skipping /dev/disk/by-partlabel/swap"
         continue
@@ -278,7 +278,7 @@ already_formatted() {
 if command -v mkswap >/dev/null; then :
     if true || ! already_formatted /dev/disk/by-partlabel/swap; then
         info "warewulf: mkswap: formatting /dev/disk/by-partlabel/swap"
-        mkswap  /dev/disk/by-partlabel/swap  || die "warewulf: mkswap: failed to format /dev/disk/by-partlabel/swap"
+        mkswap   /dev/disk/by-partlabel/swap  || die "warewulf: mkswap: failed to format /dev/disk/by-partlabel/swap"
     else
         info "warewulf: mkswap: skipping /dev/disk/by-partlabel/swap"
         continue
