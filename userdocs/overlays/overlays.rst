@@ -316,6 +316,29 @@ ignition
 --------
 
 The **ignition** overlay defines partitions and file systems on local disks.
+Configuration may be provided via native disk, partition, and filesystem fields
+or via an ``ignition`` resource.
+
+.. code-block:: yaml
+
+   ignition:
+     storage:
+       disks:
+         - device: /dev/vda
+           partitions:
+             - label: scratch
+               shouldExist: true
+               wipePartitionEntry: true
+           wipeTable: true
+       filesystems:
+         - device: /dev/disk/by-partlabel/scratch
+           format: btrfs
+           path: /scratch
+           wipeFilesystem: false
+
+If any disk/partition/filesystem configuration is provided for a node with
+explicit arguments to ``wwctl <node|profile> set``, the ``ignition`` resource is
+ignored.
 
 To use ignition during Dracut (so that the root file system may be provisioned
 before the image is loaded) include Ignition in the Dracut image.
@@ -351,8 +374,9 @@ specified with a ``localtime`` tag.
 sfdisk
 ------
 
-The **sfdisk** overlay partitions block devices during wwinit based on the
-content of the ``sfdisk`` resource.
+The **sfdisk** overlay partitions block devices during wwinit. Configuration may
+be provided using native disk and partition configuration or via an ``sfdisk``
+resource.
 
 Multiple devices can be partitioned, with each device provided as an item in
 ``sfdisk`` list.
@@ -376,6 +400,9 @@ Multiple devices can be partitioned, with each device provided as an item in
 All headers and named partition fields supported by the ``sfdisk`` input format
 are supported in the ``sfdisk`` resource.
 
+If any disk/partition configuration is provided for a node with explicit
+arguments to ``wwctl <node|profile> set``, the ``sfdisk`` resource is ignored.
+
 To use the sfdisk overlay, include sfdisk in the Dracut image. Optionally also
 include blockdev and/or udevadm, to allow the partition table to be re-scanned.
 
@@ -388,11 +415,8 @@ For more information, see the :ref:`provision to disk` section.
 mkfs
 ----
 
-The **mkfs** overlay formats block devices during wwinit based on the content of
-the ``mkfs`` resource.
-
-Multiple devices can be formatted, with each device provided as an item in
-``mkfs`` list.
+The **mkfs** overlay formats block devices during wwinit. Configuration may be
+provided using native filesystem fields or via an ``mkfs`` resource.
 
 .. code-block:: yaml
 
@@ -402,6 +426,9 @@ Multiple devices can be formatted, with each device provided as an item in
        options: -b 1024 # additional options to pass to mkfs
        overwrite: false # whether to overwrite an existing format
        size: 0 # defaults to the full device
+
+If any filesystem configuration is provided for a node with explicit arguments
+to ``wwctl <node|profile> set``, the ``mkfs`` resource is ignored.
 
 To use the mkfs overlay, include mkfs and any necessary file-system-specific
 sub-commands in the Dracut image. Optionally also include wipefs to detect
@@ -416,11 +443,8 @@ For more information, see the :ref:`provision to disk` section.
 mkswap
 ------
 
-The **mkswap** overlay formats block devices during wwinit based on the content
-of the ``mkswap`` resource.
-
-Multiple devices can be formatted, with each device provided as an item in
-``mkswap`` list.
+The **mkswap** overlay formats block devices during wwinit. Configuration may be
+provided using native filesystem fields or via a ``mkswap`` resource.
 
 .. code-block:: yaml
 
@@ -428,6 +452,9 @@ Multiple devices can be formatted, with each device provided as an item in
      - device: /dev/sda2 # the device to format
        overwrite: false # whether to overwrite an existing format
        label: swap # the label to set for the swap device
+
+If any filesystem configuration is provided for a node with explicit arguments
+to ``wwctl <node|profile> set``, the ``mkswap`` resource is ignored.
 
 To use the mkswap overlay, include mkswap in the Dracut image. Optionally also
 include wipefs to detect existing file systems.

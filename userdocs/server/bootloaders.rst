@@ -426,7 +426,7 @@ image to local storage.
 
    While provisioning to disk should be possible during a single-stage boot, not
    all features are available:
-   
+
    - Warewulf does not perform hardware detection to ensure that necessary
      kernel modules are loaded prior to init.
    - Warewulf does not load udev to ensure that ``/dev/disk/by-*`` symlinks are
@@ -447,23 +447,6 @@ root file system to be provisioned before the image is loaded.
      --diskname /dev/vda --diskwipe \
      --partname rootfs --partcreate --partnumber 1 \
      --fsname rootfs --fsformat ext4 --fspath /
-
-Alternatively, Ignition may be configured using a resource.
-
-.. code-block:: yaml
-
-   ignition:
-     storage:
-       disks:
-         - device: /dev/sda
-           partitions:
-             - label: rootfs
-           wipeTable: true
-       filesystems:
-         - device: /dev/disk/by-partlabel/ignition-rootfs
-           format: ext4
-           path: /
-           wipeFilesystem: false
 
 In order to allow Dracut to provision the disk, partition, and file system,
 Ignition must be included in the Dracut image.
@@ -486,17 +469,12 @@ image is loaded.
 
 Configure the ``sfdisk`` and ``mkfs`` overlays using resources:
 
-.. code-block:: yaml
+.. code-block:: shell
 
-   fdisk:
-     - device: /dev/sda
-       label: gpt
-       partitions:
-         - device: /dev/sda1
-           name: rootfs
-   mkfs:
-     - device: /dev/disk/by-partlabel/sfdisk-rootfs
-       type: ext4
+   wwctl node set wwnode1 \
+     --diskname /dev/vda --diskwipe \
+     --partname rootfs --partcreate --partnumber 1 \
+     --fsname rootfs --fsformat ext4 --fspath /
 
 In order to allow Dracut to provision the disk, partition, and file system, some
 additional commands must be included in the Dracut image, depending on which
@@ -525,24 +503,6 @@ functionality is used:
      --install mkfs.ext4 \
      --install wipefs \
      --regenerate-all
-
-File systems created using the ``sfdisk``, ``mkfs``, and even ``mkswap``
-overlays can be mounted explicitly using the ``fstab`` overlay by configuring
-its resource.
-
-.. code-block:: yaml
-
-   fstab:
-     - file: /
-       spec: /dev/disk/by-partlabel/rootfs
-       vfstype: ext4
-     - file: /scratch
-       mntops: nofail
-       spec: /dev/disk/by-partlabel/scratch
-       vfstype: ext4
-     - file: none
-       spec: /dev/disk/by-partlabel/swap
-       vfstype: swap
 
 Configuring the root device
 ---------------------------
