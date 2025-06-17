@@ -25,6 +25,21 @@ func (node *Node) DiskList() (disks []*Disk) {
 	return disks
 }
 
+func (node *Node) FileSystemList() (fs []*FileSystem) {
+	names := make([]string, 0, len(node.FileSystems))
+	for name := range node.FileSystems {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	for _, name := range names {
+		fsys := node.FileSystems[name]
+		if fsys != nil {
+			fs = append(fs, fsys)
+		}
+	}
+	return fs
+}
+
 func (disk *Disk) Id() string {
 	return disk.id
 }
@@ -76,6 +91,10 @@ func (disk *Disk) PartitionList() (partitions []*Partition) {
 
 func (partition *Partition) Id() string {
 	return partition.id
+}
+
+func (fs *FileSystem) Id() string {
+	return fs.id
 }
 
 /*
