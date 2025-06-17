@@ -79,23 +79,29 @@ nodes:
         partitions:
           rootfs:
             number: "1"
+            start_mib: "2"
             size_mib: "4096"
             should_exist: true
+            type_guid: linux
           scratch:
             number: "2"
+            start_mib: "4098"
             size_mib: "10240"
             should_exist: true
+            type_guid: linux
           swap:
             number: "3"
+            start_mib: "5122"
             size_mib: "2048"
-            should_exist: true`,
+            should_exist: true
+            type_guid: swap`,
 			output: `backupFile: true
 writeFile: true
 Filename: device-0
 
-size=4096MiB name=rootfs
-size=10240MiB name=scratch
-size=2048MiB name=swap
+start=2MiB size=4096MiB name=rootfs type=linux
+start=4098MiB size=10240MiB name=scratch type=linux
+start=5122MiB size=2048MiB name=swap type=swap
 `,
 		},
 		"sfdisk:10-sfdisk.sh.ww (empty)": {

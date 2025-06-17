@@ -5,7 +5,20 @@
 {{- 		$partitions := list }}
 {{- 		range $partition := $disk.PartitionList }}
 {{- 			if $partition.ShouldExist }}
-{{- 				$partitions = append $partitions (dict "name" $partition.Id "size" (printf "%s%s" $partition.SizeMiB "MiB")) }}
+{{- 				$partitionDict := dict "name" $partition.Id }}
+{{- 				if $partition.StartMiB }}
+{{- 					$_ := set $partitionDict "start" (printf "%s%s" $partition.StartMiB "MiB") }}
+{{- 				end }}
+{{- 				if $partition.SizeMiB }}
+{{- 					$_ := set $partitionDict "size" (printf "%s%s" $partition.SizeMiB "MiB") }}
+{{- 				end }}
+{{- 				if $partition.TypeGuid }}
+{{- 					$_ := set $partitionDict "type" $partition.TypeGuid }}
+{{- 				end }}
+{{- 				if $partition.Guid }}
+{{- 					$_ := set $partitionDict "uuid" $partition.Guid }}
+{{- 				end }}
+{{- 				$partitions = append $partitions $partitionDict }}
 {{- 			end }}
 {{- 		end }}
 {{- 		$disks = append $disks (dict "partitions" $partitions) }}
