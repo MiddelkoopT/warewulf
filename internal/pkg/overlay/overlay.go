@@ -372,10 +372,15 @@ func BuildOverlayIndir(nodeData node.Node, allNodes []node.Node, overlayNames []
 				for fileScanner.Scan() {
 					line := fileScanner.Text()
 					filenameFromTemplate := regFile.FindAllStringSubmatch(line, -1)
-					softlinkFromTemplate := regLink.FindAllStringSubmatch(line, -1)
-					if len(softlinkFromTemplate) != 0 {
-						wwlog.Debug("Creating soft link %s -> %s", outputPath, softlinkFromTemplate[0][1])
-						return os.Symlink(softlinkFromTemplate[0][1], outputPath)
+					targetFromTemplate := regLink.FindAllStringSubmatch(line, -1)
+					if len(targetFromTemplate) != 0 {
+						target := targetFromTemplate[0][1]
+						outputPath := outputPath
+						if len(filenameFromTemplate) != 0 {
+							outputPath = filenameFromTemplate[0][1]
+						}
+						wwlog.Debug("Creating soft link %s -> %s", outputPath, target)
+						return os.Symlink(target, outputPath)
 					} else if len(filenameFromTemplate) != 0 {
 						wwlog.Debug("Writing file %s", filenameFromTemplate[0][1])
 						if foundFileComment {
