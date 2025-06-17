@@ -1,26 +1,39 @@
-{{- with $sfdisk := index .Resources "sfdisk" }}
-{{- 	range $i, $device := $sfdisk }}
-{{ 		file (print "device-" $i) }}
-{{- 		range $header := list "unit" "label" "label-id" "first-lba" "last-lba" "table-length" "grain" "sector-size" }}
-{{- 			if index $device $header }}
-{{ $header }}: {{ index $device $header }}
+{{- $disks := list }}
+{{- if .Disks }}
+{{- 	$diskNames := list }}
+{{- 	range $disk := .ThisNode.DiskList }}
+{{- 		$partitions := list }}
+{{- 		range $partition := $disk.PartitionList }}
+{{- 			if $partition.ShouldExist }}
+{{- 				$partitions = append $partitions (dict "name" $partition.Id "size" (printf "%s%s" $partition.SizeMiB "MiB")) }}
 {{- 			end }}
 {{- 		end }}
-{{- 		range $partition := $device.partitions }}
-{{- 			$fields := list }}
-{{- 			range $field := list "start" "size" "attrs" "uuid" "name" "type" }}
-{{- 				if index $partition $field }}
-{{- 					$fields = append $fields (print $field "=" (index $partition $field)) }}
-{{- 				end }}
-{{- 				if $partition.bootable }}
-{{- 					$fields = append $fields "bootable" }}
-{{- 				end }}
+{{- 		$disks = append $disks (dict "partitions" $partitions) }}
+{{- 	end }}
+{{- else }}
+{{- 	$disks = index .Resources "sfdisk" }}
+{{- end }}
+{{- range $i, $device := $disks }}
+{{ 	file (print "device-" $i) }}
+{{- 	range $header := list "unit" "label" "label-id" "first-lba" "last-lba" "table-length" "grain" "sector-size" }}
+{{- 		if index $device $header }}
+{{ $header }}: {{ index $device $header }}
+{{- 		end }}
+{{- 	end }}
+{{- 	range $partition := $device.partitions }}
+{{- 		$fields := list }}
+{{- 		range $field := list "start" "size" "attrs" "uuid" "name" "type" }}
+{{- 			if index $partition $field }}
+{{- 				$fields = append $fields (print $field "=" (index $partition $field)) }}
 {{- 			end }}
-{{- 			if $partition.device }}
+{{- 			if $partition.bootable }}
+{{- 				$fields = append $fields "bootable" }}
+{{- 			end }}
+{{- 		end }}
+{{- 		if $partition.device }}
 {{ $partition.device }} : {{ $fields | join " " }}
-{{- 			else }}
+{{- 		else }}
 {{ $fields | join " " }}
-{{- 			end }}
 {{- 		end }}
 {{- 	end }}
 {{- end }}

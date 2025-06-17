@@ -27,7 +27,7 @@ Filename: warewulf/sfdisk/disks
 
 `,
 		},
-		"sfdisk:disks.ww (populated)": {
+		"sfdisk:disks.ww (resource)": {
 			args: []string{"--quiet=false", "--render=node1", "sfdisk", "warewulf/sfdisk/disks.ww"},
 			nodesConf: `
 nodes:
@@ -68,6 +68,36 @@ sector-size: 512
 /dev/sda3 : start=5244928 size=2097152 name=sfdisk-swap type=linux
 `,
 		},
+		"sfdisk:disks.ww (native)": {
+			args: []string{"--quiet=false", "--render=node1", "sfdisk", "warewulf/sfdisk/disks.ww"},
+			nodesConf: `
+nodes:
+  node1:
+    disks:
+      /dev/sda:
+        wipe_table: true
+        partitions:
+          rootfs:
+            number: "1"
+            size_mib: "4096"
+            should_exist: true
+          scratch:
+            number: "2"
+            size_mib: "10240"
+            should_exist: true
+          swap:
+            number: "3"
+            size_mib: "2048"
+            should_exist: true`,
+			output: `backupFile: true
+writeFile: true
+Filename: device-0
+
+size=4096MiB name=rootfs
+size=10240MiB name=scratch
+size=2048MiB name=swap
+`,
+		},
 		"sfdisk:10-sfdisk.sh.ww (empty)": {
 			args: []string{"--quiet", "--render=node1", "sfdisk", "warewulf/wwinit.d/10-sfdisk.sh.ww"},
 			nodesConf: `
@@ -96,7 +126,7 @@ else :
 fi
 `,
 		},
-		"sfdisk:10-sfdisk.sh.ww (populated)": {
+		"sfdisk:10-sfdisk.sh.ww (resource)": {
 			args: []string{"--quiet", "--render=node1", "sfdisk", "warewulf/wwinit.d/10-sfdisk.sh.ww"},
 			nodesConf: `
 nodes:
@@ -145,11 +175,75 @@ if ! command -v sfdisk >/dev/null ; then
     info "warewulf: sfdisk not found, skipping partitioning"
 else :
     info "warewulf: sfdisk: partitioning /dev/sda"
-    sfdisk /dev/sda < "${PREFIX}/warewulf/sfdisk/device-0" || die "warewulf: sfdisk: failed to partition /dev/sda"
+    sfdisk --wipe "auto" "/dev/sda" < "${PREFIX}/warewulf/sfdisk/device-0" || die "warewulf: sfdisk: failed to partition /dev/sda"
 
     if command -v blockdev >/dev/null ; then
         info "warewulf: blockdev: re-reading partition table"
         blockdev --rereadpt /dev/sda
+    fi
+    if command -v udevadm >/dev/null ; then
+        info "warewulf: udevadm: triggering udev events for block devices"
+        udevadm trigger --subsystem-match=block --action=add
+        udevadm settle
+    fi
+fi
+`,
+		},
+		"sfdisk:10-sfdisk.sh.ww (native)": {
+			args: []string{"--quiet", "--render=node1", "sfdisk", "warewulf/wwinit.d/10-sfdisk.sh.ww"},
+			nodesConf: `
+nodes:
+  node1:
+    disks:
+      /dev/sda:
+        partitions:
+          rootfs:
+            number: "1"
+            size_mib: "4096"
+            should_exist: true
+          scratch:
+            number: "2"
+            size_mib: "10240"
+            should_exist: true
+          swap:
+            number: "3"
+            size_mib: "2048"
+            should_exist: true
+      /dev/sdb:
+        wipe_table: true`,
+			output: `#!/bin/sh
+
+PATH=$PATH:/sbin:/usr/sbin:/bin:/usr/bin
+
+if ! command -v info >/dev/null; then
+    info() {
+        printf '%s\n' "$*"
+    }
+fi
+
+if ! command -v die >/dev/null; then
+    die() {
+        printf '%s\n' "$*" >&2
+        exit 1
+    }
+fi
+
+if ! command -v sfdisk >/dev/null ; then
+    info "warewulf: sfdisk not found, skipping partitioning"
+else :
+    info "warewulf: sfdisk: partitioning /dev/sda"
+    sfdisk --wipe "auto" "/dev/sda" < "${PREFIX}/warewulf/sfdisk/device-0" || die "warewulf: sfdisk: failed to partition /dev/sda"
+
+    if command -v blockdev >/dev/null ; then
+        info "warewulf: blockdev: re-reading partition table"
+        blockdev --rereadpt /dev/sda
+    fi
+    info "warewulf: sfdisk: partitioning /dev/sdb"
+    sfdisk --wipe "always" "/dev/sdb" < "${PREFIX}/warewulf/sfdisk/device-1" || die "warewulf: sfdisk: failed to partition /dev/sdb"
+
+    if command -v blockdev >/dev/null ; then
+        info "warewulf: blockdev: re-reading partition table"
+        blockdev --rereadpt /dev/sdb
     fi
     if command -v udevadm >/dev/null ; then
         info "warewulf: udevadm: triggering udev events for block devices"
