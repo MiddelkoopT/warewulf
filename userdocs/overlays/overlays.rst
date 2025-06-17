@@ -463,6 +463,13 @@ include wipefs to detect existing file systems.
 
    wwctl image exec rockylinux-9 -- /usr/bin/dracut --force --no-hostonly --add wwinit --install mkswap --regenerate-all
 
+systemd mounts
+--------------
+
+Two overlays, **systemd.mount** and **systemd.swap**, configure mounted and swap
+storage based on the configuration of native file system fields. They are often
+paired with the ``mkfs`` and ``mkswap`` overlays.
+
 host
 ----
 

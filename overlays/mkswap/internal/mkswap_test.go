@@ -288,62 +288,6 @@ else
 fi
 `,
 		},
-
-		"mkswap:disk.swap.ww": {
-			args: []string{"--quiet=false", "--render=node1", "mkswap", "etc/systemd/system/disk.swap.ww"},
-			nodesConf: `
-nodes:
-  node1:
-    filesystems:
-      /dev/disk/by-partlabel/rootfs:
-        format: ext4
-        path: /
-      /dev/disk/by-partlabel/scratch:
-        format: ext4
-        path: /scratch
-        wipe_filesystem: true
-      /dev/disk/by-partlabel/swap:
-        format: swap
-        path: swap`,
-			output: `backupFile: true
-writeFile: true
-Filename: dev-disk-by\x2dpartlabel-swap.swap
-
-
-[Unit]
-Before=swap.target
-
-[Swap]
-What=/dev/disk/by-partlabel/swap
-
-[Install]
-RequiredBy=swap.target
-`,
-		},
-
-		"mkswap:local-fs.target.wants/disk.swap.ww": {
-			args: []string{"--quiet=false", "--render=node1", "mkswap", "etc/systemd/system/local-fs.target.wants/disk.swap.ww"},
-			nodesConf: `
-nodes:
-  node1:
-    filesystems:
-      /dev/disk/by-partlabel/rootfs:
-        format: ext4
-        path: /
-      /dev/disk/by-partlabel/scratch:
-        format: ext4
-        path: /scratch
-        wipe_filesystem: true
-      /dev/disk/by-partlabel/swap:
-        format: swap
-        path: swap`,
-			output: `backupFile: true
-writeFile: true
-Filename: dev-disk-by\x2dpartlabel-swap.swap
-
-{{ /* softlink "/etc/systemd/system/dev-disk-by\x2dpartlabel-swap.swap" */ }}
-`,
-		},
 	}
 
 	for name, tt := range tests {
@@ -351,8 +295,6 @@ Filename: dev-disk-by\x2dpartlabel-swap.swap
 			env := testenv.New(t)
 			defer env.RemoveAll()
 			env.ImportFile("var/lib/warewulf/overlays/mkswap/rootfs/warewulf/wwinit.d/20-mkswap.sh.ww", "../rootfs/warewulf/wwinit.d/20-mkswap.sh.ww")
-			env.ImportFile("var/lib/warewulf/overlays/mkswap/rootfs/etc/systemd/system/disk.swap.ww", "../rootfs/etc/systemd/system/disk.swap.ww")
-			env.ImportFile("var/lib/warewulf/overlays/mkswap/rootfs/etc/systemd/system/local-fs.target.wants/disk.swap.ww", "../rootfs/etc/systemd/system/local-fs.target.wants/disk.swap.ww")
 			env.WriteFile("etc/warewulf/nodes.conf", tt.nodesConf)
 			cmd := show.GetCommand()
 			cmd.SetArgs(tt.args)
